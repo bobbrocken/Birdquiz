@@ -37,6 +37,7 @@
     align-items: center; padding: 32px 16px 64px;
   }
 
+  /* HEADER */
   .app-header {
     width: 100%; max-width: 760px;
     display: flex; align-items: center; gap: 14px; margin-bottom: 36px;
@@ -48,7 +49,7 @@
   .app-logo svg { width:24px; height:24px; fill:white; }
   .app-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; letter-spacing: -.02em; }
   .app-title span { color: var(--blue); }
-  .signed-in-bar { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .signed-in-bar { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .user-chip {
     display: flex; align-items: center; gap: 8px;
     background: var(--blue-light); border: 1px solid var(--blue-mid);
@@ -68,6 +69,19 @@
   }
   .sign-out-btn:hover { color: var(--wrong); }
 
+  /* offline pill in header */
+  .offline-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 50px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .04em;
+  }
+  .offline-pill.online  { background: #DCFCE7; color: #15803D; }
+  .offline-pill.offline { background: #FEF9C3; color: #854D0E; }
+  .offline-pill .dot { width:7px; height:7px; border-radius:50%; }
+  .offline-pill.online  .dot { background: #16A34A; }
+  .offline-pill.offline .dot { background: #CA8A04; }
+
+  /* CARD */
   .card {
     background: var(--white); border-radius: var(--radius);
     box-shadow: var(--shadow-md); border: 1px solid var(--blue-mid);
@@ -83,8 +97,7 @@
     display: inline-flex; align-items: center; gap: 12px;
     padding: 13px 28px; background: white; border: 2px solid var(--gray-200);
     border-radius: 10px; font-family: 'DM Sans', sans-serif;
-    font-size: 1rem; font-weight: 600; color: var(--gray-800);
-    cursor: pointer; transition: all .18s;
+    font-size: 1rem; font-weight: 600; color: var(--gray-800); cursor: pointer; transition: all .18s;
   }
   .btn-google:hover { border-color: var(--blue); }
   .btn-google svg { width: 22px; height: 22px; }
@@ -98,22 +111,57 @@
   }
   .folder-row { display: flex; gap: 10px; align-items: center; }
   .folder-display {
-    flex: 1; padding: 10px 14px; border: 1.5px solid var(--gray-200);
-    border-radius: 8px; font-size: .92rem; color: var(--gray-600);
-    background: var(--gray-50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex: 1; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: 8px;
+    font-size: .92rem; color: var(--gray-600); background: var(--gray-50);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .folder-display.set { color: var(--gray-800); }
 
-  /* group tags */
   .group-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .group-tag {
     padding: 3px 10px; border-radius: 50px;
     background: var(--blue-light); border: 1px solid var(--blue-mid);
     font-size: .75rem; font-weight: 600; color: var(--blue-dark);
   }
-  .group-tag.warn {
-    background: #FEF9C3; border-color: #FDE047; color: #854D0E;
+  .group-tag.warn { background: #FEF9C3; border-color: #FDE047; color: #854D0E; }
+
+  /* SYNC PANEL */
+  .sync-panel {
+    margin-top: 16px; padding: 16px 18px;
+    border-radius: 10px; border: 1.5px solid var(--blue-mid);
+    background: var(--blue-light);
   }
+  .sync-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .sync-info { font-size: .88rem; color: var(--blue-dark); }
+  .sync-info strong { font-weight: 700; }
+  .sync-info .sync-sub { font-size: .78rem; color: var(--gray-400); margin-top: 2px; }
+
+  .btn-sync {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 8px;
+    background: var(--blue); color: white; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: .88rem; font-weight: 600;
+    cursor: pointer; transition: background .15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-sync:hover { background: var(--blue-dark); }
+  .btn-sync:disabled { background: var(--gray-400); cursor: not-allowed; }
+  .btn-sync svg { width:15px; height:15px; }
+
+  /* sync progress */
+  .sync-progress { margin-top: 12px; display: none; }
+  .sync-progress.show { display: block; }
+  .sync-prog-bar-wrap { height: 6px; background: var(--blue-mid); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
+  .sync-prog-bar { height: 100%; background: var(--blue); border-radius: 99px; transition: width .3s; width: 0%; }
+  .sync-prog-label { font-size: .78rem; color: var(--blue-dark); font-weight: 500; }
+
+  /* offline play banner */
+  .offline-banner {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: 8px;
+    background: #FEF9C3; border: 1px solid #FDE047;
+    font-size: .85rem; color: #713F12; margin-bottom: 20px;
+  }
+  .offline-banner .ob-icon { font-size: 1.1rem; flex-shrink: 0; }
 
   .stepper {
     display: flex; align-items: center;
@@ -127,8 +175,8 @@
   .stepper input {
     width: 60px; height: 40px; border: none;
     border-left: 1.5px solid var(--gray-200); border-right: 1.5px solid var(--gray-200);
-    text-align: center; font-family: 'DM Sans', sans-serif;
-    font-size: 1rem; font-weight: 600; background: white; outline: none;
+    text-align: center; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    background: white; outline: none;
   }
 
   .mode-pills { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -140,7 +188,6 @@
   }
   .mode-pill:hover { border-color: var(--blue-accent); color: var(--blue); }
   .mode-pill.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); font-weight: 600; }
-
   .mode-info {
     background: var(--blue-light); border: 1px solid var(--blue-mid);
     border-radius: 8px; padding: 12px 16px; font-size: .85rem; color: var(--blue-dark);
@@ -198,28 +245,33 @@
 
   .bird-image-wrap {
     width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
-    background: var(--gray-100); margin-bottom: 24px; position: relative; border: 1.5px solid var(--gray-200);
-    cursor: zoom-in;
+    background: var(--gray-100); margin-bottom: 24px; position: relative;
+    border: 1.5px solid var(--gray-200); cursor: zoom-in;
   }
-  .bird-image-wrap img {
-    width: 100%; height: 100%;
-    object-fit: contain;        /* show full bird, no cropping */
-    object-position: center;
-    display: block; transition: opacity .3s;
-  }
+  .bird-image-wrap img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; transition: opacity .3s; }
   .img-placeholder {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 10px; color: var(--gray-400); font-size: .9rem;
   }
   .img-placeholder svg { width:48px; height:48px; opacity:.4; }
 
-  /* zoom hint */
+  .group-strip {
+    position: absolute; bottom: 10px; left: 10px;
+    background: rgba(37,99,235,.8); color: white;
+    font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+    padding: 3px 10px; border-radius: 50px; text-transform: uppercase;
+  }
+  .training-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(37,99,235,.85); color: white;
+    font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+    padding: 3px 10px; border-radius: 50px; text-transform: uppercase;
+  }
   .zoom-hint {
     position: absolute; bottom: 10px; right: 10px;
     background: rgba(0,0,0,.45); color: white;
     font-size: .7rem; font-weight: 600; padding: 3px 9px;
-    border-radius: 50px; display: flex; align-items: center; gap: 4px;
-    pointer-events: none; opacity: 0; transition: opacity .2s;
+    border-radius: 50px; pointer-events: none; opacity: 0; transition: opacity .2s;
   }
   .bird-image-wrap:hover .zoom-hint { opacity: 1; }
 
@@ -228,40 +280,18 @@
     position: fixed; inset: 0; z-index: 300;
     background: rgba(0,0,0,.92);
     display: flex; align-items: center; justify-content: center;
-    padding: 16px;
-    animation: lbIn .18s ease;
+    padding: 16px; animation: lbIn .18s ease;
   }
   @keyframes lbIn { from { opacity:0; } to { opacity:1; } }
   .lightbox.hidden { display: none; }
-  .lightbox img {
-    max-width: 100%; max-height: 100%;
-    object-fit: contain; border-radius: 8px;
-    box-shadow: 0 8px 40px rgba(0,0,0,.6);
-    cursor: zoom-out;
-  }
+  .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; cursor: zoom-out; }
   .lightbox-close {
     position: absolute; top: 16px; right: 16px;
     width: 38px; height: 38px; border-radius: 50%;
-    background: rgba(255,255,255,.15); border: none;
-    color: white; font-size: 1.3rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .15s;
+    background: rgba(255,255,255,.15); border: none; color: white;
+    font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .lightbox-close:hover { background: rgba(255,255,255,.3); }
-
-  .group-strip {
-    position: absolute; bottom: 10px; left: 10px;
-    background: rgba(37,99,235,.8); color: white;
-    font-size: .72rem; font-weight: 700; letter-spacing: .06em;
-    padding: 3px 10px; border-radius: 50px; text-transform: uppercase;
-    backdrop-filter: blur(4px);
-  }
-  .training-badge {
-    position: absolute; top: 10px; right: 10px;
-    background: rgba(37,99,235,.85); color: white;
-    font-size: .72rem; font-weight: 700; letter-spacing: .06em;
-    padding: 3px 10px; border-radius: 50px; text-transform: uppercase;
-  }
 
   .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
@@ -322,7 +352,6 @@
   .stat-box.s-wrong   .stat-num { color:var(--wrong); }
   .stat-box.s-pct     { background:var(--blue-light); border-color:var(--blue-mid); }
   .stat-box.s-pct     .stat-num { color:var(--blue); }
-
   .missed-heading { font-size:.82rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--gray-600); margin-bottom:12px; }
   .missed-list { display:flex; flex-direction:column; gap:8px; margin-bottom:28px; }
   .missed-item {
@@ -350,6 +379,9 @@
   </div>
   <div class="app-title">Bird<span>Quiz</span></div>
   <div class="signed-in-bar hidden" id="signed-in-bar">
+    <div class="offline-pill online hidden" id="offline-pill">
+      <div class="dot"></div><span id="offline-pill-label">Online</span>
+    </div>
     <div class="user-chip">
       <div class="user-avatar" id="user-avatar">?</div>
       <span id="user-name">User</span>
@@ -363,7 +395,7 @@
   <div class="auth-center">
     <div class="auth-icon">🐦</div>
     <div class="auth-heading">Welcome to BirdQuiz</div>
-    <div class="auth-sub">Sign in with Google to load your bird photos directly from Google Drive. Your images stay private — they are only read by this app.</div>
+    <div class="auth-sub">Sign in with Google to load your bird photos from Google Drive. After syncing once on WiFi, you can play completely offline.</div>
     <button class="btn-google" onclick="signIn()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Sign in with Google
@@ -376,15 +408,39 @@
 <div class="card hidden" id="screen-setup">
   <div class="setup-heading">Configure Your Quiz</div>
 
+  <!-- offline banner shown when offline -->
+  <div class="offline-banner hidden" id="offline-banner">
+    <span class="ob-icon">📴</span>
+    <span>You're offline — playing from cached images. Sync when you're back online to get new birds.</span>
+  </div>
+
   <div class="field">
     <label>📁 Google Drive — Parent Folder</label>
     <div class="folder-row">
       <div class="folder-display" id="folder-display">No folder selected…</div>
-      <button class="btn-secondary" onclick="pickDriveFolder()">Browse Drive</button>
+      <button class="btn-secondary" id="browse-btn" onclick="pickDriveFolder()">Browse Drive</button>
     </div>
     <div class="group-tags hidden" id="group-tags"></div>
     <p class="notice" id="file-count-notice"></p>
     <div class="error-box hidden" id="folder-error"></div>
+
+    <!-- SYNC PANEL -->
+    <div class="sync-panel hidden" id="sync-panel">
+      <div class="sync-top">
+        <div class="sync-info">
+          <div id="sync-status-text"><strong>Not synced yet</strong></div>
+          <div class="sync-sub" id="sync-sub-text">Sync to play offline</div>
+        </div>
+        <button class="btn-sync" id="sync-btn" onclick="startSync()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12a8 8 0 018-8V2l4 4-4 4V8a6 6 0 100 6"/></svg>
+          Sync now
+        </button>
+      </div>
+      <div class="sync-progress" id="sync-progress">
+        <div class="sync-prog-bar-wrap"><div class="sync-prog-bar" id="sync-prog-bar"></div></div>
+        <div class="sync-prog-label" id="sync-prog-label">Starting…</div>
+      </div>
+    </div>
   </div>
 
   <div class="field">
@@ -484,6 +540,81 @@
 const CLIENT_ID = '849553390474-1adjkdis3tutgujtlfihrtu9etrhb22p.apps.googleusercontent.com';
 const API_KEY   = 'AIzaSyD5PY6G8q0gAtx6062wLH0dZ2k4pF8d_wA';
 const SCOPES    = 'https://www.googleapis.com/auth/drive.readonly';
+const DB_NAME   = 'BirdQuizDB';
+const DB_VER    = 2;
+const STORE_IMG = 'images';     // key: fileId → blob
+const STORE_META= 'meta';       // key: 'catalog' → group/bird structure + sync info
+
+// ── INDEXEDDB ────────────────────────────────────
+let db = null;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains(STORE_IMG))  d.createObjectStore(STORE_IMG);
+      if (!d.objectStoreNames.contains(STORE_META)) d.createObjectStore(STORE_META);
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+function dbGet(store, key) {
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+function dbPut(store, key, value) {
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(value, key);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+function dbGetAllKeys(store) {
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAllKeys();
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+// ── CONNECTIVITY ─────────────────────────────────
+let isOnline = navigator.onLine;
+
+function updateOnlineStatus() {
+  isOnline = navigator.onLine;
+  const pill  = document.getElementById('offline-pill');
+  const label = document.getElementById('offline-pill-label');
+  const banner= document.getElementById('offline-banner');
+  const browseBtn = document.getElementById('browse-btn');
+
+  pill.classList.remove('hidden');
+  if (isOnline) {
+    pill.className  = 'offline-pill online';
+    label.textContent = 'Online';
+    banner.classList.add('hidden');
+    if (browseBtn) browseBtn.disabled = false;
+  } else {
+    pill.className  = 'offline-pill offline';
+    label.textContent = 'Offline';
+    banner.classList.remove('hidden');
+    if (browseBtn) browseBtn.disabled = true;
+    // Load from cache if available
+    loadFromCache();
+  }
+}
+window.addEventListener('online',  updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
 
 // ── AUTH ─────────────────────────────────────────
 let accessToken = null, tokenClient = null;
@@ -499,9 +630,27 @@ function initGoogleAuth() {
     }
   });
 }
-window.addEventListener('load', initGoogleAuth);
+
+async function init() {
+  db = await openDB();
+  updateOnlineStatus();
+  initGoogleAuth();
+  // Try loading from cache so offline users skip auth screen
+  const catalog = await dbGet(STORE_META, 'catalog');
+  if (catalog) {
+    loadGroupsFromCatalog(catalog);
+    // Show setup screen directly if offline or if user was previously signed in
+    if (!isOnline) {
+      document.getElementById('signed-in-bar').classList.remove('hidden');
+      document.getElementById('offline-pill').classList.remove('hidden');
+      show('screen-setup');
+    }
+  }
+}
+window.addEventListener('load', init);
 
 function signIn() {
+  if (!isOnline) { showAuthError('You need internet to sign in for the first time.'); return; }
   if (!tokenClient) { showAuthError('Google Sign-In not loaded yet — please wait a moment.'); return; }
   tokenClient.requestAccessToken();
 }
@@ -519,7 +668,10 @@ function onSignedIn() {
       document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
       document.getElementById('signed-in-bar').classList.remove('hidden');
     });
+  updateOnlineStatus();
   show('screen-setup');
+  // Restore cached folder if available
+  loadFromCache();
 }
 function showAuthError(msg) {
   const el = document.getElementById('auth-error');
@@ -532,7 +684,6 @@ async function driveGet(url) {
   if (!r.ok) throw new Error(`Drive API ${r.status}`);
   return r.json();
 }
-
 async function listSubfolders(parentId) {
   const p = new URLSearchParams({
     q: `'${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
@@ -541,13 +692,12 @@ async function listSubfolders(parentId) {
   const d = await driveGet(`https://www.googleapis.com/drive/v3/files?${p}`);
   return d.files || [];
 }
-
 async function listImagesInFolder(folderId) {
   let files = [], pageToken = null;
   do {
     const p = new URLSearchParams({
       q: `'${folderId}' in parents and mimeType contains 'image/' and trashed=false`,
-      fields: 'nextPageToken,files(id,name)', pageSize: 1000, key: API_KEY,
+      fields: 'nextPageToken,files(id,name,modifiedTime)', pageSize: 1000, key: API_KEY,
       ...(pageToken ? { pageToken } : {})
     });
     const d = await driveGet(`https://www.googleapis.com/drive/v3/files?${p}`);
@@ -562,6 +712,7 @@ let pickerFolderId = 'root';
 let pickerStack    = [{ id: 'root', name: 'My Drive' }];
 
 async function pickDriveFolder() {
+  if (!isOnline) return;
   pickerFolderId = 'root';
   pickerStack = [{ id: 'root', name: 'My Drive' }];
   await openPicker();
@@ -570,8 +721,7 @@ async function openPicker() {
   showLoading('Browsing Drive…');
   try {
     const subs = await listSubfolders(pickerFolderId);
-    hideLoading();
-    renderPicker(subs);
+    hideLoading(); renderPicker(subs);
   } catch(e) { hideLoading(); showFolderError('Could not browse Drive: ' + e.message); }
 }
 function renderPicker(subs) {
@@ -632,111 +782,189 @@ async function selectPicker() {
 }
 
 // ── DATA MODEL ───────────────────────────────────
-// groups = [ { name, birdMap: { birdName: [file,...] }, birdNames: [] }, ... ]
-// allBirdNames = flat list of every unique bird name across all groups
+// groups = [{ name, birdMap:{ birdName:[{id,name,modifiedTime},...] }, birdNames:[] }]
 let groups       = [];
-let allBirdNames = [];   // for fallback pool
+let allBirdNames = [];
 let quizMode     = 'mc';
+let currentFolderId   = null;
+let currentFolderName = null;
 
 async function loadParentFolder(parentId, parentName) {
   showLoading('Scanning subfolders…');
+  currentFolderId   = parentId;
+  currentFolderName = parentName;
   try {
-    // 1. Find subfolders
-    const subfolders = await listSubfolders(parentId);
+    const subfolders  = await listSubfolders(parentId);
+    const looseFiles  = await listImagesInFolder(parentId);
 
-    // 2. Also check for images directly in the parent (loose files)
-    const looseFiles = await listImagesInFolder(parentId);
-
-    if (subfolders.length === 0 && looseFiles.length === 0) {
-      hideLoading(); showFolderError('No subfolders or images found in this folder.'); return;
+    if (!subfolders.length && !looseFiles.length) {
+      hideLoading(); showFolderError('No subfolders or images found.'); return;
     }
 
-    groups = [];
-
-    // 3. Load each subfolder
+    const rawGroups = [];
     for (const sf of subfolders) {
       document.getElementById('loading-text').textContent = `Scanning ${sf.name}…`;
       const files = await listImagesInFolder(sf.id);
       if (!files.length) continue;
-      const birdMap = {};
-      files.forEach(f => { const n = toBirdName(f.name); (birdMap[n] = birdMap[n]||[]).push(f); });
-      const birdNames = Object.keys(birdMap);
-      groups.push({ name: sf.name, birdMap, birdNames });
+      rawGroups.push({ name: sf.name, files });
     }
-
-    // 4. Loose files get their own "General" group
-    if (looseFiles.length) {
-      const birdMap = {};
-      looseFiles.forEach(f => { const n = toBirdName(f.name); (birdMap[n] = birdMap[n]||[]).push(f); });
-      const birdNames = Object.keys(birdMap);
-      groups.push({ name: 'General', birdMap, birdNames });
-    }
-
-    if (!groups.length) { hideLoading(); showFolderError('No images found in any subfolder.'); return; }
-
-    // 5. Build global name pool for fallback
-    allBirdNames = [...new Set(groups.flatMap(g => g.birdNames))];
+    if (looseFiles.length) rawGroups.push({ name: 'General', files: looseFiles });
 
     hideLoading();
+    buildGroupsFromRaw(rawGroups);
+    renderSetupUI(parentName, rawGroups);
+    saveCatalog(parentId, parentName, rawGroups);
+    updateSyncPanel();
 
-    // 6. Show group summary
-    const totalImages = groups.reduce((s,g) => s + Object.values(g.birdMap).flat().length, 0);
-    const totalBirds  = allBirdNames.length;
+  } catch(e) { hideLoading(); showFolderError('Error: ' + e.message); }
+}
 
-    document.getElementById('folder-display').textContent = parentName;
-    document.getElementById('folder-display').classList.add('set');
-    document.getElementById('file-count-notice').textContent =
-      `${totalImages} images · ${totalBirds} species across ${groups.length} groups`;
+function buildGroupsFromRaw(rawGroups) {
+  groups = rawGroups.map(rg => {
+    const birdMap = {};
+    rg.files.forEach(f => { const n = toBirdName(f.name); (birdMap[n] = birdMap[n]||[]).push(f); });
+    return { name: rg.name, birdMap, birdNames: Object.keys(birdMap) };
+  });
+  allBirdNames = [...new Set(groups.flatMap(g => g.birdNames))];
+}
 
-    // Tag chips
-    const tagsEl = document.getElementById('group-tags');
-    tagsEl.innerHTML = '';
-    groups.forEach(g => {
-      const chip = document.createElement('span');
-      chip.className = 'group-tag' + (g.birdNames.length < 4 ? ' warn' : '');
-      chip.textContent = `${g.name} (${g.birdNames.length})`;
-      chip.title = g.birdNames.length < 4
-        ? 'Fewer than 4 species — will borrow from other groups'
-        : g.birdNames.join(', ');
-      tagsEl.appendChild(chip);
-    });
-    tagsEl.classList.remove('hidden');
+function renderSetupUI(folderName, rawGroups) {
+  const totalImages = rawGroups.reduce((s,g) => s+g.files.length, 0);
+  document.getElementById('folder-display').textContent = folderName;
+  document.getElementById('folder-display').classList.add('set');
+  document.getElementById('file-count-notice').textContent =
+    `${totalImages} images · ${allBirdNames.length} species across ${groups.length} groups`;
 
-    document.getElementById('folder-error').classList.add('hidden');
-    document.getElementById('start-btn').disabled = false;
-
-  } catch(e) { hideLoading(); showFolderError('Error loading folder: ' + e.message); }
+  const tagsEl = document.getElementById('group-tags');
+  tagsEl.innerHTML = '';
+  groups.forEach(g => {
+    const chip = document.createElement('span');
+    chip.className = 'group-tag' + (g.birdNames.length < 4 ? ' warn' : '');
+    chip.textContent = `${g.name} (${g.birdNames.length})`;
+    tagsEl.appendChild(chip);
+  });
+  tagsEl.classList.remove('hidden');
+  document.getElementById('folder-error').classList.add('hidden');
+  document.getElementById('sync-panel').classList.remove('hidden');
+  document.getElementById('start-btn').disabled = false;
 }
 
 function toBirdName(fn) {
   return fn.replace(/\.[^.]+$/,'').replace(/_\d+$/,'')
-    .split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    .split('-').map(w => w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
 }
 function showFolderError(msg) {
   const el = document.getElementById('folder-error');
   el.textContent = msg; el.classList.remove('hidden');
 }
 
-// ── SMART WRONG-ANSWER PICKER ─────────────────────
-// Returns 3 wrong bird names for a given correct name + its group.
-// Fills from same group first, then borrows from other groups.
-function pickWrongAnswers(correctName, group) {
-  const needed = 3;
-  const wrong  = [];
+// ── CATALOG (metadata stored in IDB) ─────────────
+async function saveCatalog(parentId, parentName, rawGroups) {
+  const catalog = {
+    parentId, parentName,
+    groups: rawGroups.map(g => ({ name: g.name, files: g.files })),
+    savedAt: Date.now()
+  };
+  await dbPut(STORE_META, 'catalog', catalog);
+}
 
-  // Pool from same group (excluding correct)
-  const samePool = shuffle(group.birdNames.filter(n => n !== correctName));
-  wrong.push(...samePool.slice(0, needed));
+async function loadFromCache() {
+  if (!db) return;
+  const catalog = await dbGet(STORE_META, 'catalog');
+  if (!catalog) return;
+  currentFolderId   = catalog.parentId;
+  currentFolderName = catalog.parentName;
+  buildGroupsFromRaw(catalog.groups);
+  renderSetupUI(catalog.parentName, catalog.groups);
+  updateSyncPanel();
+}
 
-  if (wrong.length < needed) {
-    // Borrow from other groups
-    const otherNames = shuffle(
-      allBirdNames.filter(n => n !== correctName && !wrong.includes(n))
-    );
-    wrong.push(...otherNames.slice(0, needed - wrong.length));
+function loadGroupsFromCatalog(catalog) {
+  currentFolderId   = catalog.parentId;
+  currentFolderName = catalog.parentName;
+  buildGroupsFromRaw(catalog.groups);
+}
+
+// ── SYNC ─────────────────────────────────────────
+let syncing = false;
+
+async function updateSyncPanel() {
+  if (!db) return;
+  const syncMeta = await dbGet(STORE_META, 'syncMeta');
+  const statusEl = document.getElementById('sync-status-text');
+  const subEl    = document.getElementById('sync-sub-text');
+  const syncBtn  = document.getElementById('sync-btn');
+
+  if (syncMeta) {
+    const d = new Date(syncMeta.syncedAt);
+    const dateStr = d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    const timeStr = d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+    statusEl.innerHTML = `<strong>${syncMeta.count} images cached</strong>`;
+    subEl.textContent  = `Last synced ${dateStr} at ${timeStr}`;
+  } else {
+    statusEl.innerHTML = '<strong>Not synced yet</strong>';
+    subEl.textContent  = 'Sync to play offline';
+  }
+  syncBtn.disabled = !isOnline || syncing;
+  syncBtn.textContent = isOnline ? '↻ Sync now' : 'Offline';
+}
+
+async function startSync() {
+  if (!isOnline || syncing || !accessToken) return;
+  syncing = true;
+
+  const syncBtn  = document.getElementById('sync-btn');
+  const progWrap = document.getElementById('sync-progress');
+  const progBar  = document.getElementById('sync-prog-bar');
+  const progLbl  = document.getElementById('sync-prog-label');
+
+  syncBtn.disabled = true;
+  progWrap.classList.add('show');
+
+  // Collect all files from current groups
+  const allFiles = groups.flatMap(g => Object.values(g.birdMap).flat());
+  const total    = allFiles.length;
+
+  // Get already-cached keys
+  const cachedKeys = new Set(await dbGetAllKeys(STORE_IMG));
+
+  let done = 0, skipped = 0, failed = 0;
+
+  for (const file of allFiles) {
+    const pct = Math.round((done / total) * 100);
+    progBar.style.width  = pct + '%';
+    progLbl.textContent  = `${done} / ${total} images (${skipped} already cached)`;
+
+    // Skip if already cached
+    if (cachedKeys.has(file.id)) {
+      skipped++; done++; continue;
+    }
+
+    try {
+      const r = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${API_KEY}`,
+        { headers: { Authorization: 'Bearer ' + accessToken } }
+      );
+      if (!r.ok) throw new Error(r.status);
+      const blob = await r.blob();
+      await dbPut(STORE_IMG, file.id, blob);
+    } catch(e) { failed++; }
+
+    done++;
   }
 
-  return wrong.slice(0, needed);
+  // Save sync metadata
+  await dbPut(STORE_META, 'syncMeta', { syncedAt: Date.now(), count: total - failed });
+
+  progBar.style.width = '100%';
+  progLbl.textContent = failed
+    ? `Done — ${total-failed} cached, ${failed} failed`
+    : `✓ All ${total} images cached for offline play!`;
+
+  syncing = false;
+  syncBtn.disabled = false;
+  updateSyncPanel();
+  setTimeout(() => { progWrap.classList.remove('show'); }, 4000);
 }
 
 // ── SETUP CONTROLS ───────────────────────────────
@@ -765,48 +993,48 @@ function startQuiz() {
   totalQ = Math.max(1, parseInt(document.getElementById('q-count').value)||10);
   scoreCorrect = scoreWrong = currentIdx = 0;
   missedBirds = {};
-
   if (quizMode==='training' && !Object.keys(trainingWeights).length)
     allBirdNames.forEach(n => trainingWeights[n] = 1);
-
   quizItems = buildSequence(totalQ);
   show('screen-quiz');
   loadQuestion();
 }
 
 function buildSequence(n) {
-  return Array.from({length: n}, () => {
+  return Array.from({length:n}, () => {
     const { name, group } = pickBird();
-    const file = randomFrom(group.birdMap[name]);
-    return { name, group, file };
+    return { name, group, file: randomFrom(group.birdMap[name]) };
   });
 }
 
-// Pick a random bird (weighted in training mode)
 function pickBird() {
-  if (quizMode === 'training') {
+  if (quizMode==='training') {
     const total = allBirdNames.reduce((s,n) => s+(trainingWeights[n]||1), 0);
-    let r = Math.random() * total;
-    for (const n of allBirdNames) {
-      r -= (trainingWeights[n]||1);
-      if (r <= 0) return { name: n, group: groupOf(n) };
-    }
+    let r = Math.random()*total;
+    for (const n of allBirdNames) { r-=(trainingWeights[n]||1); if(r<=0) return {name:n, group:groupOf(n)}; }
   }
-  // Random: pick a random group weighted by species count, then a random species
   const group = weightedRandomGroup();
-  const name  = randomFrom(group.birdNames);
-  return { name, group };
+  return { name: randomFrom(group.birdNames), group };
 }
 
 function weightedRandomGroup() {
-  const total = groups.reduce((s,g) => s + g.birdNames.length, 0);
-  let r = Math.random() * total;
-  for (const g of groups) { r -= g.birdNames.length; if (r <= 0) return g; }
+  const total = groups.reduce((s,g) => s+g.birdNames.length, 0);
+  let r = Math.random()*total;
+  for (const g of groups) { r -= g.birdNames.length; if(r<=0) return g; }
   return groups[groups.length-1];
 }
 
 function groupOf(name) {
   return groups.find(g => g.birdNames.includes(name)) || groups[0];
+}
+
+function pickWrongAnswers(correctName, group) {
+  const wrong = shuffle(group.birdNames.filter(n => n!==correctName)).slice(0,3);
+  if (wrong.length < 3) {
+    const extra = shuffle(allBirdNames.filter(n => n!==correctName && !wrong.includes(n)));
+    wrong.push(...extra.slice(0, 3-wrong.length));
+  }
+  return wrong;
 }
 
 // ── LOAD QUESTION ─────────────────────────────────
@@ -818,39 +1046,25 @@ async function loadQuestion() {
   document.getElementById('score-correct').textContent = `✓ ${scoreCorrect}`;
   document.getElementById('score-wrong').textContent   = `✗ ${scoreWrong}`;
   document.getElementById('progress-bar').style.width  = `${(currentIdx/totalQ)*100}%`;
-  document.getElementById('training-badge').classList.toggle('hidden', quizMode !== 'training');
+  document.getElementById('training-badge').classList.toggle('hidden', quizMode!=='training');
 
-  // Show group label (revealed after answer)
   const gs = document.getElementById('group-strip');
-  gs.textContent = group.name;
-  gs.classList.add('hidden');
+  gs.textContent = group.name; gs.classList.add('hidden');
 
   const img = document.getElementById('bird-image');
   const ph  = document.getElementById('img-placeholder');
   img.style.display='none'; img.style.opacity=0; ph.style.display='flex';
-  ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Loading image…`;
+  ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:.4">
+    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Loading image…`;
 
-  try {
-    const r = await fetch(
-      `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${API_KEY}`,
-      { headers: { Authorization: 'Bearer ' + accessToken } }
-    );
-    const blob = await r.blob();
-    const url  = URL.createObjectURL(blob);
-    img.onload = () => {
-      ph.style.display='none'; img.style.display='block';
-      requestAnimationFrame(() => { img.style.opacity=1; });
-      URL.revokeObjectURL(url);
-    };
-    img.src = url;
-  } catch(e) { ph.textContent = '⚠️ Could not load image'; }
+  await loadImage(file.id, img, ph);
 
   const fb = document.getElementById('feedback-strip');
   fb.className='feedback-strip'; fb.textContent='';
   document.getElementById('next-btn').classList.add('hidden');
   document.getElementById('skip-btn').style.display='';
 
-  const isInput = quizMode === 'input';
+  const isInput = quizMode==='input';
   document.getElementById('mc-area').classList.toggle('hidden', isInput);
   document.getElementById('input-area').classList.toggle('hidden', !isInput);
 
@@ -860,54 +1074,82 @@ async function loadQuestion() {
     const inp = document.getElementById('bird-input');
     inp.value=''; inp.className='bird-input'; inp.disabled=false;
     document.getElementById('submit-input-btn').disabled=false;
-    setTimeout(() => inp.focus(), 50);
+    setTimeout(()=>inp.focus(),50);
   }
 }
 
-// ── MULTIPLE CHOICE ───────────────────────────────
+// Smart image loader: try cache first, fall back to Drive
+async function loadImage(fileId, imgEl, placeholderEl) {
+  let blob = null;
+
+  // 1. Try IndexedDB cache
+  try { blob = await dbGet(STORE_IMG, fileId); } catch(e) {}
+
+  // 2. Fall back to Drive if online
+  if (!blob && isOnline && accessToken) {
+    try {
+      const r = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`,
+        { headers: { Authorization: 'Bearer ' + accessToken } }
+      );
+      blob = await r.blob();
+      // Cache it opportunistically
+      dbPut(STORE_IMG, fileId, blob).catch(()=>{});
+    } catch(e) {}
+  }
+
+  if (blob) {
+    const url = URL.createObjectURL(blob);
+    imgEl.onload = () => {
+      placeholderEl.style.display='none'; imgEl.style.display='block';
+      requestAnimationFrame(()=>{ imgEl.style.opacity=1; });
+      URL.revokeObjectURL(url);
+    };
+    imgEl.src = url;
+  } else {
+    placeholderEl.textContent = '⚠️ Image not available — sync while online to cache it';
+  }
+}
+
+// ── MC ────────────────────────────────────────────
 function buildOptions(correct, group) {
   const grid = document.getElementById('options-grid');
-  grid.innerHTML = '';
-  const wrongs = pickWrongAnswers(correct, group);
-  const opts   = shuffle([correct, ...wrongs]);
-  opts.forEach((name, i) => {
+  grid.innerHTML='';
+  const opts = shuffle([correct, ...pickWrongAnswers(correct, group)]);
+  opts.forEach((name,i) => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.dataset.name    = name;
-    btn.dataset.correct = name === correct ? '1' : '0';
-    btn.innerHTML = `<span class="option-letter">${'ABCD'[i]}</span><span>${name}</span>`;
-    btn.onclick = () => selectOption(btn, correct);
+    btn.className='option-btn'; btn.dataset.name=name; btn.dataset.correct=name===correct?'1':'0';
+    btn.innerHTML=`<span class="option-letter">${'ABCD'[i]}</span><span>${name}</span>`;
+    btn.onclick=()=>selectOption(btn,correct);
     grid.appendChild(btn);
   });
 }
-
 function selectOption(btn, correct) {
-  if (answered) return; answered = true;
-  const ok = btn.dataset.correct === '1';
+  if (answered) return; answered=true;
+  const ok=btn.dataset.correct==='1';
   document.querySelectorAll('.option-btn').forEach(b => {
     b.classList.add('revealed');
     if (b.dataset.correct==='1') b.classList.add('correct-ans');
     else if (b===btn && !ok) b.classList.add('wrong-ans');
     else b.classList.add('dimmed');
   });
-  // Reveal group badge
   document.getElementById('group-strip').classList.remove('hidden');
   recordAnswer(ok, correct);
 }
 
-// ── TEXT INPUT ────────────────────────────────────
-function handleInputKey(e) { if (e.key==='Enter') submitInput(); }
+// ── INPUT ─────────────────────────────────────────
+function handleInputKey(e) { if(e.key==='Enter') submitInput(); }
 function submitInput() {
   if (answered) return;
   const inp = document.getElementById('bird-input');
   if (!inp.value.trim()) return;
   answered=true; inp.disabled=true;
   document.getElementById('submit-input-btn').disabled=true;
-  const correct = quizItems[currentIdx].name;
-  const ok = norm(inp.value) === norm(correct);
-  inp.className = 'bird-input ' + (ok ? 'correct-input' : 'wrong-input');
+  const correct=quizItems[currentIdx].name;
+  const ok=norm(inp.value)===norm(correct);
+  inp.className='bird-input '+(ok?'correct-input':'wrong-input');
   document.getElementById('group-strip').classList.remove('hidden');
-  showFeedback(ok ? '✓ Correct!' : `✗ The correct answer was: ${correct}`, ok?'correct':'wrong');
+  showFeedback(ok?'✓ Correct!':`✗ The correct answer was: ${correct}`, ok?'correct':'wrong');
   recordAnswer(ok, correct);
 }
 function norm(s) { return s.toLowerCase().replace(/[^a-z]/g,''); }
@@ -915,80 +1157,75 @@ function norm(s) { return s.toLowerCase().replace(/[^a-z]/g,''); }
 // ── LIGHTBOX ──────────────────────────────────────
 function openLightbox() {
   const src = document.getElementById('bird-image').src;
-  if (!src || document.getElementById('bird-image').style.display === 'none') return;
+  if (!src || document.getElementById('bird-image').style.display==='none') return;
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
 function closeLightbox() {
   document.getElementById('lightbox').classList.add('hidden');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeLightbox(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
 
 // ── RECORD ────────────────────────────────────────
 function recordAnswer(ok, name) {
   if (ok) {
     scoreCorrect++;
-    if (quizMode==='training') trainingWeights[name] = Math.max(1,(trainingWeights[name]||1)-.5);
+    if (quizMode==='training') trainingWeights[name]=Math.max(1,(trainingWeights[name]||1)-.5);
     if (quizMode==='mc') showFeedback('✓ Correct!','correct');
   } else {
     scoreWrong++;
-    missedBirds[name] = (missedBirds[name]||0) + 1;
-    if (quizMode==='training') trainingWeights[name] = (trainingWeights[name]||1) + 2;
-    if (quizMode==='mc') showFeedback(`✗ That was: ${name}`, 'wrong');
+    missedBirds[name]=(missedBirds[name]||0)+1;
+    if (quizMode==='training') trainingWeights[name]=(trainingWeights[name]||1)+2;
+    if (quizMode==='mc') showFeedback(`✗ That was: ${name}`,'wrong');
   }
-  document.getElementById('score-correct').textContent = `✓ ${scoreCorrect}`;
-  document.getElementById('score-wrong').textContent   = `✗ ${scoreWrong}`;
+  document.getElementById('score-correct').textContent=`✓ ${scoreCorrect}`;
+  document.getElementById('score-wrong').textContent  =`✗ ${scoreWrong}`;
   document.getElementById('next-btn').classList.remove('hidden');
   document.getElementById('skip-btn').style.display='none';
 }
 function showFeedback(msg,type) {
-  const fb = document.getElementById('feedback-strip');
+  const fb=document.getElementById('feedback-strip');
   fb.textContent=msg; fb.className=`feedback-strip show ${type}`;
 }
-function nextQuestion() { currentIdx++; if (currentIdx>=totalQ) showResults(); else loadQuestion(); }
+function nextQuestion() { currentIdx++; if(currentIdx>=totalQ) showResults(); else loadQuestion(); }
 function skipQuestion() {
-  if (answered) return;
-  const {name} = quizItems[currentIdx];
+  if(answered) return;
+  const {name}=quizItems[currentIdx];
   scoreWrong++; missedBirds[name]=(missedBirds[name]||0)+1;
-  if (quizMode==='training') trainingWeights[name]=(trainingWeights[name]||1)+1;
+  if(quizMode==='training') trainingWeights[name]=(trainingWeights[name]||1)+1;
   document.getElementById('group-strip').classList.remove('hidden');
-  currentIdx++; if (currentIdx>=totalQ) showResults(); else loadQuestion();
+  currentIdx++; if(currentIdx>=totalQ) showResults(); else loadQuestion();
 }
 
 // ── RESULTS ───────────────────────────────────────
 function showResults() {
-  const pct = Math.round((scoreCorrect/totalQ)*100);
-  document.getElementById('res-correct').textContent = scoreCorrect;
-  document.getElementById('res-wrong').textContent   = scoreWrong;
-  document.getElementById('res-pct').textContent     = pct+'%';
-  document.getElementById('results-sub').textContent = `You answered ${scoreCorrect} of ${totalQ} correctly.`;
-
-  let emoji='😅', heading='Keep practicing!';
-  if (pct===100){emoji='🏆';heading='Perfect score!';}
+  const pct=Math.round((scoreCorrect/totalQ)*100);
+  document.getElementById('res-correct').textContent=scoreCorrect;
+  document.getElementById('res-wrong').textContent  =scoreWrong;
+  document.getElementById('res-pct').textContent    =pct+'%';
+  document.getElementById('results-sub').textContent=`You answered ${scoreCorrect} of ${totalQ} correctly.`;
+  let emoji='😅',heading='Keep practicing!';
+  if(pct===100){emoji='🏆';heading='Perfect score!';}
   else if(pct>=80){emoji='🎉';heading='Great work!';}
   else if(pct>=60){emoji='👍';heading='Not bad!';}
   else if(pct>=40){emoji='🐦';heading='Room to grow!';}
-  document.getElementById('results-emoji').textContent   = emoji;
-  document.getElementById('results-heading').textContent = heading;
-
-  const list    = document.getElementById('missed-list');
-  const sec     = document.getElementById('missed-section');
-  const entries = Object.entries(missedBirds).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('results-emoji').textContent  =emoji;
+  document.getElementById('results-heading').textContent=heading;
+  const list=document.getElementById('missed-list');
   list.innerHTML='';
-
-  if (!entries.length) {
-    sec.style.display='none';
+  const entries=Object.entries(missedBirds).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){
+    document.getElementById('missed-section').style.display='none';
     document.getElementById('retry-missed-btn').style.display='none';
   } else {
-    sec.style.display='';
+    document.getElementById('missed-section').style.display='';
     document.getElementById('retry-missed-btn').style.display='';
-    entries.forEach(([name, count]) => {
-      const grp = groupOf(name);
-      const d   = document.createElement('div');
-      d.className = 'missed-item';
-      d.innerHTML = `<span>🐦</span><span>${name}</span>
+    entries.forEach(([name,count])=>{
+      const grp=groupOf(name);
+      const d=document.createElement('div'); d.className='missed-item';
+      d.innerHTML=`<span>🐦</span><span>${name}</span>
         <span class="missed-group">${grp.name}</span>
         ${count>1?`<span class="repeat-count">×${count}</span>`:''}`;
       list.appendChild(d);
@@ -1003,22 +1240,20 @@ function restartSame() {
   show('screen-quiz'); loadQuestion();
 }
 function retryMissed() {
-  const missed = Object.keys(missedBirds);
-  if (!missed.length) return;
+  const missed=Object.keys(missedBirds); if(!missed.length) return;
   currentIdx=scoreCorrect=scoreWrong=0; missedBirds={};
-  quizItems = shuffle(missed.flatMap(name => {
-    const grp = groupOf(name);
-    return (grp.birdMap[name]||[]).map(file => ({ name, group: grp, file }));
+  quizItems=shuffle(missed.flatMap(name=>{
+    const grp=groupOf(name);
+    return (grp.birdMap[name]||[]).map(f=>({name,group:grp,file:f}));
   }));
-  totalQ = quizItems.length;
-  show('screen-quiz'); loadQuestion();
+  totalQ=quizItems.length; show('screen-quiz'); loadQuestion();
 }
 function goSetup() { show('screen-setup'); }
 
 // ── UTILS ─────────────────────────────────────────
 function show(id) {
-  ['screen-auth','screen-setup','screen-quiz','screen-results'].forEach(s =>
-    document.getElementById(s).classList.toggle('hidden', s!==id));
+  ['screen-auth','screen-setup','screen-quiz','screen-results'].forEach(s=>
+    document.getElementById(s).classList.toggle('hidden',s!==id));
 }
 function showLoading(msg='Loading…') {
   document.getElementById('loading-text').textContent=msg;
@@ -1026,7 +1261,7 @@ function showLoading(msg='Loading…') {
 }
 function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
 function shuffle(a) {
-  for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
 function randomFrom(a) { return a[Math.floor(Math.random()*a.length)]; }
