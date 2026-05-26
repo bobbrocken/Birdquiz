@@ -993,28 +993,79 @@ function startQuiz() {
   totalQ = Math.max(1, parseInt(document.getElementById('q-count').value)||10);
   scoreCorrect = scoreWrong = currentIdx = 0;
   missedBirds = {};
-  if (quizMode==='training' && !Object.keys(trainingWeights).length)
-    allBirdNames.forEach(n => trainingWeights[n] = 1);
+
+  // Always (re)initialise training weights when starting,
+  // ensuring new birds added since last session get a weight too.
+  if (quizMode === 'training') {
+    allBirdNames.forEach(n => {
+      if (!(n in trainingWeights)) trainingWeights[n] = 1;
+    });
+  }
+
   quizItems = buildSequence(totalQ);
   show('screen-quiz');
   loadQuestion();
 }
 
+// Build a sequence using a shuffled-deck approach so every image
+// appears at most once before any image is repeated.
 function buildSequence(n) {
-  return Array.from({length:n}, () => {
-    const { name, group } = pickBird();
-    return { name, group, file: randomFrom(group.birdMap[name]) };
-  });
+  // Flatten all individual image files into a pool
+  const allFiles = groups.flatMap(g =>
+    g.birdNames.flatMap(name =>
+      g.birdMap[name].map(file => ({ name, group: g, file }))
+    )
+  );
+
+  if (quizMode === 'training') {
+    // For training: build a weighted deck — higher-weight birds
+    // get more slots, but each slot is a distinct image.
+    // Expand: each bird gets ceil(weight) copies of its images in the deck.
+    let deck = [];
+    allBirdNames.forEach(name => {
+      const group  = groupOf(name);
+      const weight = Math.ceil(trainingWeights[name] || 1);
+      const files  = group.birdMap[name] || [];
+      // Add weighted copies, cycling through the bird's images
+      for (let i = 0; i < weight; i++) {
+        deck.push({ name, group, file: files[i % files.length] });
+      }
+    });
+    shuffle(deck);
+    // Remove consecutive duplicate bird names for better variety
+    deck = removeClusters(deck);
+    // Trim or extend to requested length
+    while (deck.length < n) deck = [...deck, ...shuffle([...deck])];
+    return deck.slice(0, n);
+  }
+
+  // Normal / MC mode: shuffle all images, then cut to n.
+  // If n > total images, cycle through a second shuffled pass.
+  let deck = shuffle([...allFiles]);
+  while (deck.length < n) deck = [...deck, ...shuffle([...allFiles])];
+  // Remove consecutive same-bird runs
+  deck = removeClusters(deck);
+  while (deck.length < n) deck = [...deck, ...shuffle([...allFiles])];
+  return deck.slice(0, n);
 }
 
-function pickBird() {
-  if (quizMode==='training') {
-    const total = allBirdNames.reduce((s,n) => s+(trainingWeights[n]||1), 0);
-    let r = Math.random()*total;
-    for (const n of allBirdNames) { r-=(trainingWeights[n]||1); if(r<=0) return {name:n, group:groupOf(n)}; }
+// Prevent the same bird appearing back-to-back by re-inserting offenders further ahead.
+function removeClusters(deck) {
+  for (let i = 1; i < deck.length; i++) {
+    if (deck[i].name === deck[i-1].name) {
+      // Find the next position where this bird isn't adjacent
+      let moved = false;
+      for (let j = i+2; j < deck.length; j++) {
+        if (deck[j].name !== deck[i].name && deck[j-1].name !== deck[i].name) {
+          const [item] = deck.splice(i, 1);
+          deck.splice(j-1, 0, item);
+          moved = true; break;
+        }
+      }
+      if (!moved) break; // Can't improve further
+    }
   }
-  const group = weightedRandomGroup();
-  return { name: randomFrom(group.birdNames), group };
+  return deck;
 }
 
 function weightedRandomGroup() {
