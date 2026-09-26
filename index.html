@@ -69,7 +69,6 @@
   }
   .sign-out-btn:hover { color: var(--wrong); }
 
-  /* offline pill in header */
   .offline-pill {
     display: flex; align-items: center; gap: 6px;
     padding: 4px 12px; border-radius: 50px;
@@ -147,14 +146,12 @@
   .btn-sync:disabled { background: var(--gray-400); cursor: not-allowed; }
   .btn-sync svg { width:15px; height:15px; }
 
-  /* sync progress */
   .sync-progress { margin-top: 12px; display: none; }
   .sync-progress.show { display: block; }
   .sync-prog-bar-wrap { height: 6px; background: var(--blue-mid); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
   .sync-prog-bar { height: 100%; background: var(--blue); border-radius: 99px; transition: width .3s; width: 0%; }
   .sync-prog-label { font-size: .78rem; color: var(--blue-dark); font-weight: 500; }
 
-  /* offline play banner */
   .offline-banner {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 16px; border-radius: 8px;
@@ -188,6 +185,7 @@
   }
   .mode-pill:hover { border-color: var(--blue-accent); color: var(--blue); }
   .mode-pill.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); font-weight: 600; }
+  .mode-pill.disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
   .mode-info {
     background: var(--blue-light); border: 1px solid var(--blue-mid);
     border-radius: 8px; padding: 12px 16px; font-size: .85rem; color: var(--blue-dark);
@@ -248,12 +246,38 @@
     background: var(--gray-100); margin-bottom: 24px; position: relative;
     border: 1.5px solid var(--gray-200); cursor: zoom-in;
   }
+  .bird-image-wrap.audio-mode { cursor: default; background: var(--blue-light); }
   .bird-image-wrap img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; transition: opacity .3s; }
   .img-placeholder {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 10px; color: var(--gray-400); font-size: .9rem;
   }
   .img-placeholder svg { width:48px; height:48px; opacity:.4; }
+
+  /* AUDIO PLAYER */
+  .audio-player {
+    position: absolute; inset: 0; display: none;
+    flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  }
+  .audio-player.show { display: flex; }
+  .play-btn {
+    width: 84px; height: 84px; border-radius: 50%;
+    background: var(--blue); color: white; border: none;
+    font-size: 2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(37,99,235,.4); transition: transform .15s, background .15s;
+  }
+  .play-btn:hover { background: var(--blue-dark); transform: scale(1.05); }
+  .play-btn.playing { animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 6px 20px rgba(37,99,235,.4); }
+    50% { box-shadow: 0 6px 32px rgba(37,99,235,.65); }
+  }
+  .audio-label { font-size: .88rem; color: var(--blue-dark); font-weight: 600; }
+  .audio-replay {
+    background: none; border: none; color: var(--blue-dark);
+    font-size: .8rem; font-weight: 600; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
 
   .group-strip {
     position: absolute; bottom: 10px; left: 10px;
@@ -266,6 +290,12 @@
     background: rgba(37,99,235,.85); color: white;
     font-size: .72rem; font-weight: 700; letter-spacing: .06em;
     padding: 3px 10px; border-radius: 50px; text-transform: uppercase;
+  }
+  .media-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,.5); color: white;
+    font-size: .7rem; font-weight: 700; letter-spacing: .04em;
+    padding: 3px 9px; border-radius: 50px;
   }
   .zoom-hint {
     position: absolute; bottom: 10px; right: 10px;
@@ -395,7 +425,7 @@
   <div class="auth-center">
     <div class="auth-icon">🐦</div>
     <div class="auth-heading">Welcome to BirdQuiz</div>
-    <div class="auth-sub">Sign in with Google to load your bird photos from Google Drive. After syncing once on WiFi, you can play completely offline.</div>
+    <div class="auth-sub">Sign in with Google to load your bird photos and calls from Google Drive. After syncing once on WiFi, you can play completely offline.</div>
     <button class="btn-google" onclick="signIn()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Sign in with Google
@@ -408,10 +438,9 @@
 <div class="card hidden" id="screen-setup">
   <div class="setup-heading">Configure Your Quiz</div>
 
-  <!-- offline banner shown when offline -->
   <div class="offline-banner hidden" id="offline-banner">
     <span class="ob-icon">📴</span>
-    <span>You're offline — playing from cached images. Sync when you're back online to get new birds.</span>
+    <span>You're offline — playing from cached media. Sync when you're back online to get new birds.</span>
   </div>
 
   <div class="field">
@@ -424,7 +453,6 @@
     <p class="notice" id="file-count-notice"></p>
     <div class="error-box hidden" id="folder-error"></div>
 
-    <!-- SYNC PANEL -->
     <div class="sync-panel hidden" id="sync-panel">
       <div class="sync-top">
         <div class="sync-info">
@@ -449,6 +477,18 @@
       <button onclick="changeQ(-5)">−</button>
       <input type="number" id="q-count" value="10" min="1" max="200">
       <button onclick="changeQ(+5)">+</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>🎬 Media Type</label>
+    <div class="mode-pills">
+      <div class="mode-pill active" data-media="image" onclick="selectMedia(this)"><span>🖼️</span> Photos</div>
+      <div class="mode-pill" data-media="audio" onclick="selectMedia(this)"><span>🔊</span> Calls</div>
+      <div class="mode-pill" data-media="mixed" onclick="selectMedia(this)"><span>🎲</span> Mixed</div>
+    </div>
+    <div class="mode-info" style="margin-top:8px">
+      <span>ℹ️</span><span id="media-info-text">Bird photos only.</span>
     </div>
   </div>
 
@@ -479,18 +519,24 @@
   </div>
   <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
 
-  <div class="bird-image-wrap" onclick="openLightbox()">
+  <div class="bird-image-wrap" id="bird-image-wrap" onclick="handleMediaAreaClick()">
     <div class="img-placeholder" id="img-placeholder">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-      Loading image…
+      Loading…
     </div>
     <img id="bird-image" src="" alt="" style="display:none;opacity:0;transition:opacity .3s;">
+    <div class="audio-player" id="audio-player">
+      <button class="play-btn" id="play-btn" onclick="toggleAudioPlay(event)">▶</button>
+      <div class="audio-label" id="audio-label">Tap to play the call</div>
+      <button class="audio-replay hidden" id="audio-replay-btn" onclick="replayAudio(event)">↻ Replay</button>
+      <audio id="bird-audio" preload="auto"></audio>
+    </div>
+    <div class="media-badge hidden" id="media-badge">🔊 Call</div>
     <div class="group-strip hidden" id="group-strip"></div>
     <div class="training-badge hidden" id="training-badge">Training</div>
-    <div class="zoom-hint">🔍 tap to enlarge</div>
+    <div class="zoom-hint" id="zoom-hint">🔍 tap to enlarge</div>
   </div>
 
-  <!-- LIGHTBOX -->
   <div class="lightbox hidden" id="lightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
     <img id="lightbox-img" src="" alt="">
@@ -542,8 +588,8 @@ const API_KEY   = 'AIzaSyD5PY6G8q0gAtx6062wLH0dZ2k4pF8d_wA';
 const SCOPES    = 'https://www.googleapis.com/auth/drive.readonly';
 const DB_NAME   = 'BirdQuizDB';
 const DB_VER    = 2;
-const STORE_IMG = 'images';     // key: fileId → blob
-const STORE_META= 'meta';       // key: 'catalog' → group/bird structure + sync info
+const STORE_IMG = 'images';      // key: fileId → blob (used for both image & audio blobs)
+const STORE_META= 'meta';
 
 // ── INDEXEDDB ────────────────────────────────────
 let db = null;
@@ -560,28 +606,25 @@ function openDB() {
     req.onerror   = e => rej(e.target.error);
   });
 }
-
 function dbGet(store, key) {
   return new Promise((res, rej) => {
-    const tx  = db.transaction(store, 'readonly');
+    const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).get(key);
     req.onsuccess = e => res(e.target.result);
     req.onerror   = e => rej(e.target.error);
   });
 }
-
 function dbPut(store, key, value) {
   return new Promise((res, rej) => {
-    const tx  = db.transaction(store, 'readwrite');
+    const tx = db.transaction(store, 'readwrite');
     const req = tx.objectStore(store).put(value, key);
     req.onsuccess = e => res(e.target.result);
     req.onerror   = e => rej(e.target.error);
   });
 }
-
 function dbGetAllKeys(store) {
   return new Promise((res, rej) => {
-    const tx  = db.transaction(store, 'readonly');
+    const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).getAllKeys();
     req.onsuccess = e => res(e.target.result);
     req.onerror   = e => rej(e.target.error);
@@ -590,14 +633,12 @@ function dbGetAllKeys(store) {
 
 // ── CONNECTIVITY ─────────────────────────────────
 let isOnline = navigator.onLine;
-
 function updateOnlineStatus() {
   isOnline = navigator.onLine;
   const pill  = document.getElementById('offline-pill');
   const label = document.getElementById('offline-pill-label');
   const banner= document.getElementById('offline-banner');
   const browseBtn = document.getElementById('browse-btn');
-
   pill.classList.remove('hidden');
   if (isOnline) {
     pill.className  = 'offline-pill online';
@@ -609,7 +650,6 @@ function updateOnlineStatus() {
     label.textContent = 'Offline';
     banner.classList.remove('hidden');
     if (browseBtn) browseBtn.disabled = true;
-    // Load from cache if available
     loadFromCache();
   }
 }
@@ -618,7 +658,6 @@ window.addEventListener('offline', updateOnlineStatus);
 
 // ── AUTH ─────────────────────────────────────────
 let accessToken = null, tokenClient = null;
-
 function initGoogleAuth() {
   if (!window.google) { setTimeout(initGoogleAuth, 200); return; }
   tokenClient = google.accounts.oauth2.initTokenClient({
@@ -630,16 +669,13 @@ function initGoogleAuth() {
     }
   });
 }
-
 async function init() {
   db = await openDB();
   updateOnlineStatus();
   initGoogleAuth();
-  // Try loading from cache so offline users skip auth screen
   const catalog = await dbGet(STORE_META, 'catalog');
   if (catalog) {
     loadGroupsFromCatalog(catalog);
-    // Show setup screen directly if offline or if user was previously signed in
     if (!isOnline) {
       document.getElementById('signed-in-bar').classList.remove('hidden');
       document.getElementById('offline-pill').classList.remove('hidden');
@@ -670,7 +706,6 @@ function onSignedIn() {
     });
   updateOnlineStatus();
   show('screen-setup');
-  // Restore cached folder if available
   loadFromCache();
 }
 function showAuthError(msg) {
@@ -692,12 +727,13 @@ async function listSubfolders(parentId) {
   const d = await driveGet(`https://www.googleapis.com/drive/v3/files?${p}`);
   return d.files || [];
 }
-async function listImagesInFolder(folderId) {
+// Lists both image and audio files (mp3, wav, and any other audio/* or image/* mime type)
+async function listMediaInFolder(folderId) {
   let files = [], pageToken = null;
   do {
     const p = new URLSearchParams({
-      q: `'${folderId}' in parents and mimeType contains 'image/' and trashed=false`,
-      fields: 'nextPageToken,files(id,name,modifiedTime)', pageSize: 1000, key: API_KEY,
+      q: `'${folderId}' in parents and (mimeType contains 'image/' or mimeType contains 'audio/') and trashed=false`,
+      fields: 'nextPageToken,files(id,name,mimeType)', pageSize: 1000, key: API_KEY,
       ...(pageToken ? { pageToken } : {})
     });
     const d = await driveGet(`https://www.googleapis.com/drive/v3/files?${p}`);
@@ -705,6 +741,9 @@ async function listImagesInFolder(folderId) {
     pageToken = d.nextPageToken;
   } while (pageToken);
   return files;
+}
+function kindOf(file) {
+  return (file.mimeType || '').startsWith('audio/') ? 'audio' : 'image';
 }
 
 // ── FOLDER PICKER ────────────────────────────────
@@ -782,29 +821,26 @@ async function selectPicker() {
 }
 
 // ── DATA MODEL ───────────────────────────────────
-// groups = [{ name, birdMap:{ birdName:[{id,name,modifiedTime},...] }, birdNames:[] }]
+// groups = [{ name, birdMap: { birdName: {image:[files], audio:[files]} }, birdNames: [] }]
 let groups       = [];
 let allBirdNames = [];
 let quizMode     = 'mc';
-let currentFolderId   = null;
-let currentFolderName = null;
+let mediaType    = 'image';   // 'image' | 'audio' | 'mixed'
 
 async function loadParentFolder(parentId, parentName) {
   showLoading('Scanning subfolders…');
-  currentFolderId   = parentId;
-  currentFolderName = parentName;
   try {
     const subfolders  = await listSubfolders(parentId);
-    const looseFiles  = await listImagesInFolder(parentId);
+    const looseFiles  = await listMediaInFolder(parentId);
 
     if (!subfolders.length && !looseFiles.length) {
-      hideLoading(); showFolderError('No subfolders or images found.'); return;
+      hideLoading(); showFolderError('No subfolders or media found.'); return;
     }
 
     const rawGroups = [];
     for (const sf of subfolders) {
       document.getElementById('loading-text').textContent = `Scanning ${sf.name}…`;
-      const files = await listImagesInFolder(sf.id);
+      const files = await listMediaInFolder(sf.id);
       if (!files.length) continue;
       rawGroups.push({ name: sf.name, files });
     }
@@ -815,6 +851,7 @@ async function loadParentFolder(parentId, parentName) {
     renderSetupUI(parentName, rawGroups);
     saveCatalog(parentId, parentName, rawGroups);
     updateSyncPanel();
+    updateMediaPillAvailability();
 
   } catch(e) { hideLoading(); showFolderError('Error: ' + e.message); }
 }
@@ -822,18 +859,25 @@ async function loadParentFolder(parentId, parentName) {
 function buildGroupsFromRaw(rawGroups) {
   groups = rawGroups.map(rg => {
     const birdMap = {};
-    rg.files.forEach(f => { const n = toBirdName(f.name); (birdMap[n] = birdMap[n]||[]).push(f); });
+    rg.files.forEach(f => {
+      const n = toBirdName(f.name);
+      if (!birdMap[n]) birdMap[n] = { image: [], audio: [] };
+      birdMap[n][kindOf(f)].push(f);
+    });
     return { name: rg.name, birdMap, birdNames: Object.keys(birdMap) };
   });
   allBirdNames = [...new Set(groups.flatMap(g => g.birdNames))];
 }
 
 function renderSetupUI(folderName, rawGroups) {
-  const totalImages = rawGroups.reduce((s,g) => s+g.files.length, 0);
+  const totalFiles  = rawGroups.reduce((s,g) => s+g.files.length, 0);
+  const totalImages = rawGroups.reduce((s,g) => s+g.files.filter(f=>kindOf(f)==='image').length, 0);
+  const totalAudio  = rawGroups.reduce((s,g) => s+g.files.filter(f=>kindOf(f)==='audio').length, 0);
+
   document.getElementById('folder-display').textContent = folderName;
   document.getElementById('folder-display').classList.add('set');
   document.getElementById('file-count-notice').textContent =
-    `${totalImages} images · ${allBirdNames.length} species across ${groups.length} groups`;
+    `${totalImages} photos · ${totalAudio} calls · ${allBirdNames.length} species across ${groups.length} groups`;
 
   const tagsEl = document.getElementById('group-tags');
   tagsEl.innerHTML = '';
@@ -858,6 +902,23 @@ function showFolderError(msg) {
   el.textContent = msg; el.classList.remove('hidden');
 }
 
+// Count how many birds have at least one file of a given media kind, across all groups
+function countBirdsWithMedia(kind) {
+  const set = new Set();
+  groups.forEach(g => g.birdNames.forEach(n => {
+    if (g.birdMap[n][kind].length) set.add(n);
+  }));
+  return set.size;
+}
+function updateMediaPillAvailability() {
+  const audioCount = countBirdsWithMedia('audio');
+  const imageCount = countBirdsWithMedia('image');
+  const audioPill = document.querySelector('.mode-pill[data-media="audio"]');
+  const mixedPill = document.querySelector('.mode-pill[data-media="mixed"]');
+  if (audioPill) audioPill.classList.toggle('disabled', audioCount === 0);
+  if (mixedPill) mixedPill.classList.toggle('disabled', audioCount === 0 || imageCount === 0);
+}
+
 // ── CATALOG (metadata stored in IDB) ─────────────
 async function saveCatalog(parentId, parentName, rawGroups) {
   const catalog = {
@@ -867,27 +928,21 @@ async function saveCatalog(parentId, parentName, rawGroups) {
   };
   await dbPut(STORE_META, 'catalog', catalog);
 }
-
 async function loadFromCache() {
   if (!db) return;
   const catalog = await dbGet(STORE_META, 'catalog');
   if (!catalog) return;
-  currentFolderId   = catalog.parentId;
-  currentFolderName = catalog.parentName;
   buildGroupsFromRaw(catalog.groups);
   renderSetupUI(catalog.parentName, catalog.groups);
   updateSyncPanel();
+  updateMediaPillAvailability();
 }
-
 function loadGroupsFromCatalog(catalog) {
-  currentFolderId   = catalog.parentId;
-  currentFolderName = catalog.parentName;
   buildGroupsFromRaw(catalog.groups);
 }
 
 // ── SYNC ─────────────────────────────────────────
 let syncing = false;
-
 async function updateSyncPanel() {
   if (!db) return;
   const syncMeta = await dbGet(STORE_META, 'syncMeta');
@@ -899,7 +954,7 @@ async function updateSyncPanel() {
     const d = new Date(syncMeta.syncedAt);
     const dateStr = d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
     const timeStr = d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-    statusEl.innerHTML = `<strong>${syncMeta.count} images cached</strong>`;
+    statusEl.innerHTML = `<strong>${syncMeta.count} files cached</strong>`;
     subEl.textContent  = `Last synced ${dateStr} at ${timeStr}`;
   } else {
     statusEl.innerHTML = '<strong>Not synced yet</strong>';
@@ -912,34 +967,23 @@ async function updateSyncPanel() {
 async function startSync() {
   if (!isOnline || syncing || !accessToken) return;
   syncing = true;
-
   const syncBtn  = document.getElementById('sync-btn');
   const progWrap = document.getElementById('sync-progress');
   const progBar  = document.getElementById('sync-prog-bar');
   const progLbl  = document.getElementById('sync-prog-label');
-
   syncBtn.disabled = true;
   progWrap.classList.add('show');
 
-  // Collect all files from current groups
-  const allFiles = groups.flatMap(g => Object.values(g.birdMap).flat());
+  const allFiles = groups.flatMap(g => g.birdNames.flatMap(n => [...g.birdMap[n].image, ...g.birdMap[n].audio]));
   const total    = allFiles.length;
-
-  // Get already-cached keys
   const cachedKeys = new Set(await dbGetAllKeys(STORE_IMG));
-
   let done = 0, skipped = 0, failed = 0;
 
   for (const file of allFiles) {
     const pct = Math.round((done / total) * 100);
     progBar.style.width  = pct + '%';
-    progLbl.textContent  = `${done} / ${total} images (${skipped} already cached)`;
-
-    // Skip if already cached
-    if (cachedKeys.has(file.id)) {
-      skipped++; done++; continue;
-    }
-
+    progLbl.textContent  = `${done} / ${total} files (${skipped} already cached)`;
+    if (cachedKeys.has(file.id)) { skipped++; done++; continue; }
     try {
       const r = await fetch(
         `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${API_KEY}`,
@@ -949,18 +993,14 @@ async function startSync() {
       const blob = await r.blob();
       await dbPut(STORE_IMG, file.id, blob);
     } catch(e) { failed++; }
-
     done++;
   }
 
-  // Save sync metadata
   await dbPut(STORE_META, 'syncMeta', { syncedAt: Date.now(), count: total - failed });
-
   progBar.style.width = '100%';
   progLbl.textContent = failed
     ? `Done — ${total-failed} cached, ${failed} failed`
-    : `✓ All ${total} images cached for offline play!`;
-
+    : `✓ All ${total} files cached for offline play!`;
   syncing = false;
   syncBtn.disabled = false;
   updateSyncPanel();
@@ -974,116 +1014,112 @@ function changeQ(d) {
 }
 const modeTexts = {
   mc:       'Wrong answers are always from the same bird group — much trickier!',
-  input:    "A photo is shown — type the bird's common name and press Enter.",
+  input:    "The bird is shown/played — type the common name and press Enter.",
   training: 'Wrong answers come back more often. Build up your weak spots!'
 };
 function selectMode(el) {
-  document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#screen-setup .mode-pills:nth-of-type(1) .mode-pill, [data-mode]').forEach(p => {});
+  document.querySelectorAll('.mode-pill[data-mode]').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   quizMode = el.dataset.mode;
   document.getElementById('mode-info-text').textContent = modeTexts[quizMode];
+}
+const mediaTexts = {
+  image: 'Bird photos only.',
+  audio: 'Bird calls only — tap play and listen before answering.',
+  mixed: 'Random mix of photos and calls, question by question.'
+};
+function selectMedia(el) {
+  if (el.classList.contains('disabled')) return;
+  document.querySelectorAll('.mode-pill[data-media]').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  mediaType = el.dataset.media;
+  document.getElementById('media-info-text').textContent = mediaTexts[mediaType];
 }
 
 // ── QUIZ STATE ────────────────────────────────────
 let quizItems=[], totalQ=10, currentIdx=0, scoreCorrect=0, scoreWrong=0;
 let answered=false, missedBirds={}, trainingWeights={};
+let quizGroups = [], quizAllBirdNames = [];   // filtered view for the active mediaType
+
+function hasKind(entry, kind) {
+  if (kind === 'image') return entry.image.length > 0;
+  if (kind === 'audio') return entry.audio.length > 0;
+  return entry.image.length > 0 || entry.audio.length > 0; // mixed
+}
+function buildQuizView(type) {
+  const view = groups.map(g => ({
+    name: g.name,
+    birdMap: g.birdMap,
+    birdNames: g.birdNames.filter(n => hasKind(g.birdMap[n], type))
+  })).filter(g => g.birdNames.length > 0);
+  return view;
+}
+function pickMediaForBird(entry, type) {
+  if (type === 'image') return { file: randomFrom(entry.image), kind: 'image' };
+  if (type === 'audio') return { file: randomFrom(entry.audio), kind: 'audio' };
+  // mixed: combine available options, pick one at random
+  const pool = [
+    ...entry.image.map(f => ({ file: f, kind: 'image' })),
+    ...entry.audio.map(f => ({ file: f, kind: 'audio' }))
+  ];
+  return randomFrom(pool);
+}
 
 function startQuiz() {
-  if (!groups.length) return;
+  quizGroups = buildQuizView(mediaType);
+  quizAllBirdNames = [...new Set(quizGroups.flatMap(g => g.birdNames))];
+  if (!quizGroups.length) {
+    showFolderError('No birds have the selected media type. Try a different Media Type.');
+    return;
+  }
   totalQ = Math.max(1, parseInt(document.getElementById('q-count').value)||10);
   scoreCorrect = scoreWrong = currentIdx = 0;
   missedBirds = {};
-
-  // Always (re)initialise training weights when starting,
-  // ensuring new birds added since last session get a weight too.
   if (quizMode === 'training') {
-    allBirdNames.forEach(n => {
-      if (!(n in trainingWeights)) trainingWeights[n] = 1;
-    });
+    quizAllBirdNames.forEach(n => { if (!(n in trainingWeights)) trainingWeights[n] = 1; });
   }
-
   quizItems = buildSequence(totalQ);
   show('screen-quiz');
   loadQuestion();
 }
 
-// Build a sequence using a shuffled-deck approach so every image
-// appears at most once before any image is repeated.
 function buildSequence(n) {
-  // Flatten all individual image files into a pool
-  const allFiles = groups.flatMap(g =>
-    g.birdNames.flatMap(name =>
-      g.birdMap[name].map(file => ({ name, group: g, file }))
-    )
-  );
-
-  if (quizMode === 'training') {
-    // For training: build a weighted deck — higher-weight birds
-    // get more slots, but each slot is a distinct image.
-    // Expand: each bird gets ceil(weight) copies of its images in the deck.
-    let deck = [];
-    allBirdNames.forEach(name => {
-      const group  = groupOf(name);
-      const weight = Math.ceil(trainingWeights[name] || 1);
-      const files  = group.birdMap[name] || [];
-      // Add weighted copies, cycling through the bird's images
-      for (let i = 0; i < weight; i++) {
-        deck.push({ name, group, file: files[i % files.length] });
-      }
-    });
-    shuffle(deck);
-    // Remove consecutive duplicate bird names for better variety
-    deck = removeClusters(deck);
-    // Trim or extend to requested length
-    while (deck.length < n) deck = [...deck, ...shuffle([...deck])];
-    return deck.slice(0, n);
-  }
-
-  // Normal / MC mode: shuffle all images, then cut to n.
-  // If n > total images, cycle through a second shuffled pass.
-  let deck = shuffle([...allFiles]);
-  while (deck.length < n) deck = [...deck, ...shuffle([...allFiles])];
-  // Remove consecutive same-bird runs
-  deck = removeClusters(deck);
-  while (deck.length < n) deck = [...deck, ...shuffle([...allFiles])];
-  return deck.slice(0, n);
+  return Array.from({length:n}, () => {
+    const { name, group } = pickBird();
+    const { file, kind } = pickMediaForBird(group.birdMap[name], mediaType);
+    return { name, group, file, kind };
+  });
 }
-
-// Prevent the same bird appearing back-to-back by re-inserting offenders further ahead.
-function removeClusters(deck) {
-  for (let i = 1; i < deck.length; i++) {
-    if (deck[i].name === deck[i-1].name) {
-      // Find the next position where this bird isn't adjacent
-      let moved = false;
-      for (let j = i+2; j < deck.length; j++) {
-        if (deck[j].name !== deck[i].name && deck[j-1].name !== deck[i].name) {
-          const [item] = deck.splice(i, 1);
-          deck.splice(j-1, 0, item);
-          moved = true; break;
-        }
-      }
-      if (!moved) break; // Can't improve further
-    }
+function pickBird() {
+  if (quizMode==='training') {
+    const total = quizAllBirdNames.reduce((s,n) => s+(trainingWeights[n]||1), 0);
+    let r = Math.random()*total;
+    for (const n of quizAllBirdNames) { r-=(trainingWeights[n]||1); if(r<=0) return {name:n, group:groupOf(n)}; }
   }
-  return deck;
+  const group = weightedRandomGroup();
+  return { name: randomFrom(group.birdNames), group };
 }
-
 function weightedRandomGroup() {
-  const total = groups.reduce((s,g) => s+g.birdNames.length, 0);
+  const total = quizGroups.reduce((s,g) => s+g.birdNames.length, 0);
   let r = Math.random()*total;
-  for (const g of groups) { r -= g.birdNames.length; if(r<=0) return g; }
-  return groups[groups.length-1];
+  for (const g of quizGroups) { r -= g.birdNames.length; if(r<=0) return g; }
+  return quizGroups[quizGroups.length-1];
 }
-
 function groupOf(name) {
-  return groups.find(g => g.birdNames.includes(name)) || groups[0];
+  return quizGroups.find(g => g.birdNames.includes(name))
+      || groups.find(g => g.birdNames.includes(name))
+      || quizGroups[0] || groups[0];
 }
-
 function pickWrongAnswers(correctName, group) {
-  const wrong = shuffle(group.birdNames.filter(n => n!==correctName)).slice(0,3);
+  let wrong = shuffle(group.birdNames.filter(n => n!==correctName)).slice(0,3);
   if (wrong.length < 3) {
-    const extra = shuffle(allBirdNames.filter(n => n!==correctName && !wrong.includes(n)));
+    const extra = shuffle(quizAllBirdNames.filter(n => n!==correctName && !wrong.includes(n)));
     wrong.push(...extra.slice(0, 3-wrong.length));
+  }
+  if (wrong.length < 3) {
+    const extra2 = shuffle(allBirdNames.filter(n => n!==correctName && !wrong.includes(n)));
+    wrong.push(...extra2.slice(0, 3-wrong.length));
   }
   return wrong;
 }
@@ -1091,7 +1127,7 @@ function pickWrongAnswers(correctName, group) {
 // ── LOAD QUESTION ─────────────────────────────────
 async function loadQuestion() {
   answered = false;
-  const { name, group, file } = quizItems[currentIdx];
+  const { name, group, file, kind } = quizItems[currentIdx];
 
   document.getElementById('quiz-counter').textContent = `Question ${currentIdx+1} / ${totalQ}`;
   document.getElementById('score-correct').textContent = `✓ ${scoreCorrect}`;
@@ -1102,13 +1138,30 @@ async function loadQuestion() {
   const gs = document.getElementById('group-strip');
   gs.textContent = group.name; gs.classList.add('hidden');
 
-  const img = document.getElementById('bird-image');
-  const ph  = document.getElementById('img-placeholder');
-  img.style.display='none'; img.style.opacity=0; ph.style.display='flex';
-  ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:.4">
-    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Loading image…`;
+  const wrap = document.getElementById('bird-image-wrap');
+  const img  = document.getElementById('bird-image');
+  const ph   = document.getElementById('img-placeholder');
+  const audioPlayer = document.getElementById('audio-player');
+  const mediaBadge  = document.getElementById('media-badge');
+  const zoomHint    = document.getElementById('zoom-hint');
 
-  await loadImage(file.id, img, ph);
+  img.style.display='none'; img.style.opacity=0;
+  audioPlayer.classList.remove('show');
+  ph.style.display='flex';
+  ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:.4">
+    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Loading…`;
+
+  if (kind === 'audio') {
+    wrap.classList.add('audio-mode');
+    mediaBadge.classList.remove('hidden');
+    zoomHint.classList.add('hidden');
+    await loadAudio(file.id);
+  } else {
+    wrap.classList.remove('audio-mode');
+    mediaBadge.classList.add('hidden');
+    zoomHint.classList.remove('hidden');
+    await loadImageMedia(file.id, img, ph);
+  }
 
   const fb = document.getElementById('feedback-strip');
   fb.className='feedback-strip'; fb.textContent='';
@@ -1129,14 +1182,10 @@ async function loadQuestion() {
   }
 }
 
-// Smart image loader: try cache first, fall back to Drive
-async function loadImage(fileId, imgEl, placeholderEl) {
+// Fetch a blob (cache first, Drive fallback), used for both images and audio
+async function fetchMediaBlob(fileId) {
   let blob = null;
-
-  // 1. Try IndexedDB cache
   try { blob = await dbGet(STORE_IMG, fileId); } catch(e) {}
-
-  // 2. Fall back to Drive if online
   if (!blob && isOnline && accessToken) {
     try {
       const r = await fetch(
@@ -1144,11 +1193,14 @@ async function loadImage(fileId, imgEl, placeholderEl) {
         { headers: { Authorization: 'Bearer ' + accessToken } }
       );
       blob = await r.blob();
-      // Cache it opportunistically
       dbPut(STORE_IMG, fileId, blob).catch(()=>{});
     } catch(e) {}
   }
+  return blob;
+}
 
+async function loadImageMedia(fileId, imgEl, placeholderEl) {
+  const blob = await fetchMediaBlob(fileId);
   if (blob) {
     const url = URL.createObjectURL(blob);
     imgEl.onload = () => {
@@ -1158,8 +1210,70 @@ async function loadImage(fileId, imgEl, placeholderEl) {
     };
     imgEl.src = url;
   } else {
-    placeholderEl.textContent = '⚠️ Image not available — sync while online to cache it';
+    placeholderEl.textContent = '⚠️ Photo not available — sync while online to cache it';
   }
+}
+
+let currentAudioUrl = null;
+async function loadAudio(fileId) {
+  const ph = document.getElementById('img-placeholder');
+  const audioEl = document.getElementById('bird-audio');
+  const playBtn = document.getElementById('play-btn');
+  const replayBtn = document.getElementById('audio-replay-btn');
+  const label = document.getElementById('audio-label');
+
+  playBtn.textContent = '▶'; playBtn.classList.remove('playing');
+  replayBtn.classList.add('hidden');
+  label.textContent = 'Loading call…';
+
+  const blob = await fetchMediaBlob(fileId);
+  if (currentAudioUrl) { URL.revokeObjectURL(currentAudioUrl); currentAudioUrl = null; }
+
+  if (blob) {
+    currentAudioUrl = URL.createObjectURL(blob);
+    audioEl.src = currentAudioUrl;
+    ph.style.display = 'none';
+    document.getElementById('audio-player').classList.add('show');
+    label.textContent = 'Tap to play the call';
+  } else {
+    ph.textContent = '⚠️ Call not available — sync while online to cache it';
+  }
+}
+
+function toggleAudioPlay(e) {
+  if (e) e.stopPropagation();
+  const audioEl = document.getElementById('bird-audio');
+  const playBtn = document.getElementById('play-btn');
+  const replayBtn = document.getElementById('audio-replay-btn');
+  const label = document.getElementById('audio-label');
+  if (audioEl.paused) {
+    audioEl.play();
+    playBtn.textContent = '⏸'; playBtn.classList.add('playing');
+    label.textContent = 'Playing…';
+  } else {
+    audioEl.pause();
+    playBtn.textContent = '▶'; playBtn.classList.remove('playing');
+    label.textContent = 'Paused';
+  }
+  audioEl.onended = () => {
+    playBtn.textContent = '▶'; playBtn.classList.remove('playing');
+    label.textContent = 'Tap to replay';
+    replayBtn.classList.remove('hidden');
+  };
+}
+function replayAudio(e) {
+  if (e) e.stopPropagation();
+  const audioEl = document.getElementById('bird-audio');
+  audioEl.currentTime = 0;
+  audioEl.play();
+  document.getElementById('play-btn').textContent = '⏸';
+  document.getElementById('play-btn').classList.add('playing');
+  document.getElementById('audio-label').textContent = 'Playing…';
+}
+function handleMediaAreaClick() {
+  const wrap = document.getElementById('bird-image-wrap');
+  if (wrap.classList.contains('audio-mode')) return; // handled by play button itself
+  openLightbox();
 }
 
 // ── MC ────────────────────────────────────────────
@@ -1207,9 +1321,9 @@ function norm(s) { return s.toLowerCase().replace(/[^a-z]/g,''); }
 
 // ── LIGHTBOX ──────────────────────────────────────
 function openLightbox() {
-  const src = document.getElementById('bird-image').src;
-  if (!src || document.getElementById('bird-image').style.display==='none') return;
-  document.getElementById('lightbox-img').src = src;
+  const imgEl = document.getElementById('bird-image');
+  if (!imgEl.src || imgEl.style.display==='none') return;
+  document.getElementById('lightbox-img').src = imgEl.src;
   document.getElementById('lightbox').classList.remove('hidden');
   document.body.style.overflow='hidden';
 }
@@ -1231,22 +1345,28 @@ function recordAnswer(ok, name) {
     if (quizMode==='training') trainingWeights[name]=(trainingWeights[name]||1)+2;
     if (quizMode==='mc') showFeedback(`✗ That was: ${name}`,'wrong');
   }
-  document.getElementById('score-correct').textContent=`✓ ${scoreCorrect}`;
-  document.getElementById('score-wrong').textContent  =`✗ ${scoreWrong}`;
+  document.getElementById('score-correct').textContent = `✓ ${scoreCorrect}`;
+  document.getElementById('score-wrong').textContent   = `✗ ${scoreWrong}`;
   document.getElementById('next-btn').classList.remove('hidden');
   document.getElementById('skip-btn').style.display='none';
 }
 function showFeedback(msg,type) {
-  const fb=document.getElementById('feedback-strip');
+  const fb = document.getElementById('feedback-strip');
   fb.textContent=msg; fb.className=`feedback-strip show ${type}`;
 }
-function nextQuestion() { currentIdx++; if(currentIdx>=totalQ) showResults(); else loadQuestion(); }
+function nextQuestion() {
+  const audioEl = document.getElementById('bird-audio');
+  if (audioEl) audioEl.pause();
+  currentIdx++; if(currentIdx>=totalQ) showResults(); else loadQuestion();
+}
 function skipQuestion() {
   if(answered) return;
   const {name}=quizItems[currentIdx];
   scoreWrong++; missedBirds[name]=(missedBirds[name]||0)+1;
   if(quizMode==='training') trainingWeights[name]=(trainingWeights[name]||1)+1;
   document.getElementById('group-strip').classList.remove('hidden');
+  const audioEl = document.getElementById('bird-audio');
+  if (audioEl) audioEl.pause();
   currentIdx++; if(currentIdx>=totalQ) showResults(); else loadQuestion();
 }
 
@@ -1262,8 +1382,8 @@ function showResults() {
   else if(pct>=80){emoji='🎉';heading='Great work!';}
   else if(pct>=60){emoji='👍';heading='Not bad!';}
   else if(pct>=40){emoji='🐦';heading='Room to grow!';}
-  document.getElementById('results-emoji').textContent  =emoji;
-  document.getElementById('results-heading').textContent=heading;
+  document.getElementById('results-emoji').textContent   = emoji;
+  document.getElementById('results-heading').textContent = heading;
   const list=document.getElementById('missed-list');
   list.innerHTML='';
   const entries=Object.entries(missedBirds).sort((a,b)=>b[1]-a[1]);
@@ -1295,16 +1415,23 @@ function retryMissed() {
   currentIdx=scoreCorrect=scoreWrong=0; missedBirds={};
   quizItems=shuffle(missed.flatMap(name=>{
     const grp=groupOf(name);
-    return (grp.birdMap[name]||[]).map(f=>({name,group:grp,file:f}));
+    const entry = grp.birdMap[name] || { image: [], audio: [] };
+    const files = mediaType==='audio' ? entry.audio : mediaType==='image' ? entry.image : [...entry.image, ...entry.audio];
+    return files.map(f=>({name, group:grp, file:f, kind: entry.image.includes(f) ? 'image' : 'audio'}));
   }));
+  if (!quizItems.length) return;
   totalQ=quizItems.length; show('screen-quiz'); loadQuestion();
 }
-function goSetup() { show('screen-setup'); }
+function goSetup() {
+  const audioEl = document.getElementById('bird-audio');
+  if (audioEl) audioEl.pause();
+  show('screen-setup');
+}
 
 // ── UTILS ─────────────────────────────────────────
 function show(id) {
-  ['screen-auth','screen-setup','screen-quiz','screen-results'].forEach(s=>
-    document.getElementById(s).classList.toggle('hidden',s!==id));
+  ['screen-auth','screen-setup','screen-quiz','screen-results'].forEach(s =>
+    document.getElementById(s).classList.toggle('hidden', s!==id));
 }
 function showLoading(msg='Loading…') {
   document.getElementById('loading-text').textContent=msg;
